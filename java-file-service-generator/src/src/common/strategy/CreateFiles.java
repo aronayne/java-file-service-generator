@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * TODO instead of String list , perhaps should use a Map instead, greater speed in accessing keys.....
+ * 
+ * @author Adrian
+ *
+ */
 
 public class CreateFiles {
 	
@@ -21,11 +27,36 @@ public class CreateFiles {
 		int lineCounter = 0;
 		int fileCounter = 0;
 
+		try {
+			
 		List<String> lines = new ArrayList<String>();
 
+		
+		BufferedWriter out1 = new BufferedWriter(new FileWriter("d:/tmp/Movie.java"));
+		out1.write("package com.movie.values;");
+		out1.newLine();
+		out1.write("import java.util.ArrayList;");
+		out1.newLine();
+		out1.write("import java.util.List;");
+		out1.newLine();
+		out1.write("public interface Movie {");
+		out1.write("public List<String> getMovieList();");
+		out1.newLine();
+		out1.write("}");
+		out1.close();
+		
+		BufferedWriter out2 = new BufferedWriter(new FileWriter("d:/tmp/MovieDetails.java"));
+		out2.write("package com.movie.values;");
+		out2.newLine();
+		out2.write("import java.util.ArrayList;");
+		out2.newLine();
+		out2.write("import java.util.List;");
+		out2.newLine();
+		out2.write("public class MovieDetails {");
+		out2.write("public static List<Movie> movieDetailsList = new ArrayList<Movie>();");
+		out2.write("static {");
+		
 		for (String filmName : filmNames) {
-			
-
 			System.out.println(filmName + "," + filmYearMap.get(filmName));
 
 			/**
@@ -34,17 +65,20 @@ public class CreateFiles {
 			 */
 			String line = filmName + "," + filmYearMap.get(filmName);
 
-			line = line.replaceAll("\"", "\\\\\"");
-	/*		line = line.replaceAll("\"", "");*/
-			lines.add(line);
+			line = line.replace("\\", "");
+			line = line.replace("\"", "\\\"");
 
+			//line = line.replaceAll("\\", "");
+			lines.add(line);
+		
 			++lineCounter;
 			if (lineCounter == 5000) {
-				System.out.println("Creating file d:/tmp/Movie" + fileCounter+ ".java");
+				System.out.println("Creating file d:/tmp/MovieImpl" + fileCounter+ ".java");
 
-				try {
-					BufferedWriter out = new BufferedWriter(new FileWriter(
-							"d:/tmp/Movie" + fileCounter + ".java"));
+				out2.newLine();
+				out2.write("movieDetailsList.add(new MovieImpl" + fileCounter+"());");
+				
+					BufferedWriter out = new BufferedWriter(new FileWriter("d:/tmp/MovieImpl" + fileCounter + ".java"));
 
 					out.write("package com.movie.values;");
 					out.newLine();
@@ -52,7 +86,7 @@ public class CreateFiles {
 					out.newLine();
 					out.write("import java.util.List;");
 					out.newLine();
-					out.write("public class Movie" + fileCounter + " {");
+					out.write("public class MovieImpl" + fileCounter + " implements Movie {");
 					out.newLine();
 					out.write("public static List<String> movieList = new ArrayList<String>();");
 					out.newLine();
@@ -66,17 +100,39 @@ public class CreateFiles {
 					}
 					out.write("}");
 					out.newLine();
+					out.newLine();
+					
+					out.write("@Override");
+					out.newLine();
+					out.write("public List<String> getMovieList() {");
+					out.newLine();
+					out.write("     return movieList;");
+					out.newLine();
+					out.write("}");
+					out.newLine();
+					
 					out.write("}");
 					out.close();
 					++fileCounter;
 					lineCounter = 0;
 					lines = new ArrayList<String>();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
+				} 
 			}
+		
+		
+		out2.write("}");
+		out2.newLine();
+		out2.write("}");
+		out2.close();
+		}
+		
+		
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
+	public void createAccessorClass(){
+		
+	}
 }
